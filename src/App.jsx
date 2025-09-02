@@ -43,7 +43,7 @@ function App(){
           {/* <h1 className="text-4xl font-extrabold text-center text-gray-800 mb-6">AI Aggregator</h1> */}
           {questions.map((q,index)=>(
             <div key={index} className={`flex ${q.type==="user" ? "justify-start" : "justify-end"}`}>
-              <div className={`rounded-lg p-4 max-w-2xl text-sm ${q.type==="user" ? "bg-blue-500 text-white" : "bg-gray-700 text-white"}`}>
+              <div className={`rounded-lg p-4 max-w-2xl text-lg ${q.type==="user" ? "bg-blue-500 text-white" : "bg-gray-700 text-white"}`}>
                 <p>{q.text}</p>
               </div>
             </div>
@@ -53,6 +53,7 @@ function App(){
         <div className="fixed bottom-0 left-0 w-full p-6 bg-gray-800">
           <div className="flex justify-between items-center mb-4">
             <div className="flex space-x-4">
+
               <label className="text-lg text-white">
                   <input 
                     className="text-blue-500"
@@ -75,7 +76,18 @@ function App(){
                 Gemini
               </label>
 
-              <label className="text-gray-500 text-lg">
+              <label className="text-lg text-white">
+                  <input 
+                    className="text-purple-500"
+                    type="radio"
+                    value="deepseek"
+                    checked={model==="deepseek"}
+                    onChange={(e)=>setModel(e.target.value)}
+                  />
+                DeepSeek
+              </label>
+
+              {/* <label className="text-gray-500 text-lg">
                 <input
                   className="text-gray-300"
                   type="radio"
@@ -83,7 +95,7 @@ function App(){
                   disabled
                 />
                 Copilot (coming soon)
-              </label>
+              </label> */}
             </div>
 
             <button
@@ -98,7 +110,7 @@ function App(){
           </div>
 
           <textarea
-            className="w-full p-4 bg-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-4 bg-gray-700 rounded-lg text-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             rows="2"
             placeholder="Type your message..."
             value={prompt}
