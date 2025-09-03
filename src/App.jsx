@@ -20,6 +20,28 @@ function App(){
       {type:"user",text:prompt}
     ])
 
+    if(model==="all"){
+      const models=["chatgpt","gemini","deepseek"];
+      await Promise.all(models.map(async(m)=>{
+        try{
+          const res=await axios.post("http://127.0.0.1:5000/api/respond",{prompt,model:m});
+          setQuestions((prevQuestions)=>[
+            ...prevQuestions,
+            {type:"ai",text:`${res.data.provider}:${res.data.answer}`}
+          ]);
+        }
+        catch(err){
+          setQuestions((prevQuestions)=>[
+            ...prevQuestions,
+            {type:"ai",text:`${m} error:${err.message}`}
+          ]);
+        }
+      }));
+      setPrompt("");
+      setLoading(false);
+      return;
+    }
+
     try{
       const res=await axios.post("http://127.0.0.1:5000/api/respond",{prompt,model,});
       setQuestions((prevQuestions)=>[
@@ -27,10 +49,10 @@ function App(){
         {type:"ai",text:res.data.answer || JSON.stringify(res.data)}
       ]);
       setPrompt("")
-      setResponse(res.data.answer || JSON.stringify(res.data));
+      //setResponse(res.data.answer || JSON.stringify(res.data));
     }
     catch(err){
-      setResponse("Error: ",err.message);
+      setResponse("Error: "+err.message);
     }
     setLoading(false);
   };
@@ -39,7 +61,7 @@ function App(){
     <div className="min-h-screen bg-gradient-to-r from-blue-100 via-purple-100 to-pink-100 flex flex-col px-6 py-12">
       <div className="max-w-3xl w-full mx-auto rounded-xl shadow-xl p-8 space-y-6 flex flex-col h-full">
         
-        <div className="flex flex-col space-y-4 overflow-auto flex-grow mb-32">
+        <div className="flex flex-col space-y-4 overflow-y-auto flex-grow mb-32">
           {/* <h1 className="text-4xl font-extrabold text-center text-gray-800 mb-6">AI Aggregator</h1> */}
           {questions.map((q,index)=>(
             <div key={index} className={`flex ${q.type==="user" ? "justify-start" : "justify-end"}`}>
@@ -87,6 +109,17 @@ function App(){
                 DeepSeek
               </label>
 
+              <label className="text-lg text-white">
+                <input
+                  className="text-green-500"
+                  type="radio"
+                  value="all"
+                  checked={model==="all"}
+                  onChange={(e)=>setModel(e.target.value)}
+                />
+                All
+              </label>
+
               {/* <label className="text-gray-500 text-lg">
                 <input
                   className="text-gray-300"
@@ -97,6 +130,7 @@ function App(){
                 Copilot (coming soon)
               </label> */}
             </div>
+
 
             <button
               className="px-4 py-2 bg-blue-500 text-white text-lg rounded-lg font-semibold hover:bg-blue-600 transition"
