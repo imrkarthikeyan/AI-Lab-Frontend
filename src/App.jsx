@@ -34,7 +34,7 @@ function App(){
       });
       models.forEach(async(m,i)=>{
         try{
-          const res=await axios.post("http://127.0.0.1:5000/api/respond",{
+          const res=await axios.post("https://ai-lab-backend-1.onrender.com/api/respond",{
             prompt,
             model:m
           });
@@ -64,7 +64,7 @@ function App(){
     }
 
     try{
-      const res=await axios.post("http://127.0.0.1:5000/api/respond",{prompt,model,});
+      const res=await axios.post("https://ai-lab-backend-1.onrender.com/api/respond",{prompt,model,});
       setQuestions((prevQuestions)=>[
         ...prevQuestions,
         {type:"ai",text:res.data.answer || JSON.stringify(res.data)}
@@ -85,8 +85,9 @@ function App(){
 
   return(
     <div className="min-h-screen bg-gradient-to-r from-blue-100 via-purple-100 to-pink-100 flex flex-col px-6 py-12">
-      <h1 className="flex items-center justify-center font-bold text-4xl text-blue-900">Chaminiseek</h1>
-      <div className="max-w-7xl w-full mx-auto rounded-xl shadow-xl p-8 space-y-6 flex flex-col h-full">
+      <h1 className="fixed top-0 left-0 w-full text-center font-bold text-4xl text-blue-900 bg-gradient-to-r from-blue-100 via-purple-100 to-pink-100 py-4 shadow-md z-50">Chaminiseek</h1>
+
+      <div className="max-w-8xl w-full mx-auto rounded-xl shadow-xl p-8 space-y-6 flex flex-col h-full">
         
         <div className="flex flex-col space-y-4 overflow-y-auto flex-grow mb-32">
           {/* <h1 className="text-4xl font-extrabold text-center text-gray-800 mb-6">AI Aggregator</h1> */}
@@ -105,7 +106,7 @@ function App(){
             }
             return(
               <div key={index} className={`flex ${q.type==="user" ? "justify-start" : "justify-end"}`}>
-                <div className={`rounded-lg p-4 max-w-6xl text-lg ${q.type==="user" ? "bg-blue-500 text-white" : "bg-gray-700 text-white"}`}>
+                <div className={`rounded-lg p-4 max-w-8xl text-lg ${q.type==="user" ? "bg-blue-500 text-white" : "bg-gray-700 text-white"}`}>
                   <p>{q.text}</p>
                 </div>
               </div>
