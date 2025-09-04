@@ -22,21 +22,42 @@ function App(){
 
     if(model==="all"){
       const models=["chatgpt","gemini","deepseek"];
-      await Promise.all(models.map(async(m)=>{
+      const initialAnswers=models.map((m)=>({
+        provider:m,
+        answer:"Waiting..."
+      }));
+
+      let rowIndex;
+      setQuestions((prev)=>{
+        rowIndex=prev.length;
+        return [...prev,{type:"ai-all",answers:initialAnswers}];
+      });
+      models.forEach(async(m,i)=>{
         try{
-          const res=await axios.post("http://127.0.0.1:5000/api/respond",{prompt,model:m});
-          setQuestions((prevQuestions)=>[
-            ...prevQuestions,
-            {type:"ai",text:`${res.data.provider}:${res.data.answer}`}
-          ]);
+          const res=await axios.post("http://127.0.0.1:5000/api/respond",{
+            prompt,
+            model:m
+          });
+          setQuestions((prev)=>{
+            const updated=[...prev];
+            updated[rowIndex].answers[i]={
+              provider:res.data.provider,
+              answer:res.data.answer || "No response",
+            };
+            return updated;
+          });
         }
         catch(err){
-          setQuestions((prevQuestions)=>[
-            ...prevQuestions,
-            {type:"ai",text:`${m} error:${err.message}`}
-          ]);
+          setQuestions((prev)=>{
+            const updated=[...prev];
+            updated[rowIndex].answers[i]={
+              provider:m,
+              answer:"Error: "+err.message
+            };
+            return updated;
+          });
         }
-      }));
+      });
       setPrompt("");
       setLoading(false);
       return;
@@ -48,28 +69,48 @@ function App(){
         ...prevQuestions,
         {type:"ai",text:res.data.answer || JSON.stringify(res.data)}
       ]);
-      setPrompt("")
+      //setPrompt("")
       //setResponse(res.data.answer || JSON.stringify(res.data));
     }
     catch(err){
-      setResponse("Error: "+err.message);
+      setQuestions((prev)=>[
+        ...prev,
+        {type:"ai",text:"Error : "+err.message}
+      ]);
+      //setResponse("Error: "+err.message);
     }
+    setPrompt("");
     setLoading(false);
   };
 
   return(
     <div className="min-h-screen bg-gradient-to-r from-blue-100 via-purple-100 to-pink-100 flex flex-col px-6 py-12">
-      <div className="max-w-3xl w-full mx-auto rounded-xl shadow-xl p-8 space-y-6 flex flex-col h-full">
+      <h1 className="flex items-center justify-center font-bold text-4xl text-blue-900">Chaminiseek</h1>
+      <div className="max-w-7xl w-full mx-auto rounded-xl shadow-xl p-8 space-y-6 flex flex-col h-full">
         
         <div className="flex flex-col space-y-4 overflow-y-auto flex-grow mb-32">
           {/* <h1 className="text-4xl font-extrabold text-center text-gray-800 mb-6">AI Aggregator</h1> */}
-          {questions.map((q,index)=>(
-            <div key={index} className={`flex ${q.type==="user" ? "justify-start" : "justify-end"}`}>
-              <div className={`rounded-lg p-4 max-w-2xl text-lg ${q.type==="user" ? "bg-blue-500 text-white" : "bg-gray-700 text-white"}`}>
-                <p>{q.text}</p>
+          {questions.map((q,index)=>{
+            if(q.type==="ai-all"){
+              return(
+                <div key={index} className="grid grid-cols-3 gap-4">
+                  {q.answers.map((ans,i)=>(
+                    <div key={i} className="bg-gray-700 text-white rounded-lg p-4 text-lg">
+                      <p className="font-bold">{ans.provider}</p>
+                      <p>{ans.answer}</p>
+                    </div>
+                  ))}
+                </div>
+              );
+            }
+            return(
+              <div key={index} className={`flex ${q.type==="user" ? "justify-start" : "justify-end"}`}>
+                <div className={`rounded-lg p-4 max-w-6xl text-lg ${q.type==="user" ? "bg-blue-500 text-white" : "bg-gray-700 text-white"}`}>
+                  <p>{q.text}</p>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         <div className="fixed bottom-0 left-0 w-full p-6 bg-gray-800">
