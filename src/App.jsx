@@ -37,7 +37,7 @@ function App(){
       });
       models.forEach(async(m,i)=>{
         try{
-          const res=await axios.post("http://127.0.0.1:5000/api/respond",{
+          const res=await axios.post("https://ai-lab-backend-y9bo.onrender.com/api/respond",{
             model:m,
             history:newHistory
           });
@@ -67,7 +67,7 @@ function App(){
     }
 
     try{
-      const res=await axios.post("http://127.0.0.1:5000/api/respond",{prompt,model,history:newHistory});
+      const res=await axios.post("https://ai-lab-backend-y9bo.onrender.com/api/respond",{prompt,model,history:newHistory});
       setQuestions((prevQuestions)=>[
         ...prevQuestions,
         {type:"ai",text:res.data.answer || JSON.stringify(res.data)}
