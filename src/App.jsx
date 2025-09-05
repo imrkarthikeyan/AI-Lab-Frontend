@@ -14,10 +14,13 @@ function App(){
   const handleSubmit=async(e)=>{
     e.preventDefault();
     setLoading(true);
+
+    const newUserMessage={type:"user",text:prompt};
+    const newHistory=[...questions.filter(q=>q.type==="user" || q.type==="ai"),newUserMessage];
     
     setQuestions((prevQuestions)=>[
       ...prevQuestions,
-      {type:"user",text:prompt}
+      newUserMessage
     ])
 
     if(model==="all"){
@@ -34,9 +37,9 @@ function App(){
       });
       models.forEach(async(m,i)=>{
         try{
-          const res=await axios.post("https://ai-lab-backend-1.onrender.com/api/respond",{
-            prompt,
-            model:m
+          const res=await axios.post("http://127.0.0.1:5000/api/respond",{
+            model:m,
+            history:newHistory
           });
           setQuestions((prev)=>{
             const updated=[...prev];
@@ -64,7 +67,7 @@ function App(){
     }
 
     try{
-      const res=await axios.post("https://ai-lab-backend-1.onrender.com/api/respond",{prompt,model,});
+      const res=await axios.post("http://127.0.0.1:5000/api/respond",{prompt,model,history:newHistory});
       setQuestions((prevQuestions)=>[
         ...prevQuestions,
         {type:"ai",text:res.data.answer || JSON.stringify(res.data)}
