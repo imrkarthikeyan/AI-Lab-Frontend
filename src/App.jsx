@@ -88,7 +88,11 @@ function App(){
 
   return(
     <div className="min-h-screen bg-gradient-to-r bg-gray-900 flex flex-col px-6 py-12">
-      <h1 className="fixed top-0 left-0 w-full text-center font-bold text-4xl text-[DodgerBlue] bg-gradient-to-r py-4 shadow-md z-50">Chaminiseek</h1>
+      <div className="fixed top-0 left-0 w-full bg-gray-900  py-4 shadow-md z-50">
+        <h1 className="text-center font-bold text-4xl text-[DodgerBlue]">
+          Chaminiseek
+        </h1>
+      </div>
 
       <div className="max-w-8xl w-full mx-auto rounded-xl shadow-xl p-8 space-y-6 flex flex-col h-full">
         
